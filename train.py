@@ -1,16 +1,16 @@
-from datetime import datetime
 import torch
 import data as Data
 import model as Model
 import argparse
 import logging
 import core.logger as Logger
+import core.metrics as Metrics
 from core.wandb_logger import WandbLogger
 from tensorboardX import SummaryWriter
+import os
+import numpy as np
 
 if __name__ == "__main__":
-    date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    save_path = r"D:\innovative\pet_ct__paper_and_code\PET-Reconstruction-main\experiments"
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config', type=str, default='config/sr_sr3_16_128.json',
                         help='JSON file for configuration')
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # parse configs
     args = parser.parse_args()
     opt = Logger.parse(args)
-    # convert to NoneDict, which return None for missing key.
+    # Convert to NoneDict, which return None for missing key.
     opt = Logger.dict_to_nonedict(opt)
 
     # logging
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     diffusion = Model.create_model(opt)
     logger.info('Initial Model Finished')
 
-    # train
+    # Train
     current_step = diffusion.begin_step
     current_epoch = diffusion.begin_epoch
     n_iter = opt['train']['n_iter']
